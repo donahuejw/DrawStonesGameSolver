@@ -7,12 +7,19 @@ import java.util.Map;
 
 public class GameSolver {
     public final static GameSolver INSTANCE = new GameSolver();
-    private Map<List<Integer>, Solution> solutionCache = new HashMap<>();
 
     private GameSolver(){}
 
-
     public Solution findWinCountsForBoardAndPossibleMoves(List<Integer> board, List<List<Integer>> possibleMoves) {
+        return findCountsRecursive(board, possibleMoves, new HashMap<>());
+    }
+
+    public Solution findCountsRecursive(List<Integer> board, List<List<Integer>> possibleMoves, Map<List<Integer>, Solution> solutionCache) {
+        // first try to retrieve from cache since we see certain boards multiple times
+        if (solutionCache.containsKey(board)) {
+            return solutionCache.get(board);
+        }
+
         // if no valid moves, determine winner and increment that player's counter (base case of recursion)
         List<List<Integer>> validMoves = getValidMoves(board, possibleMoves);
         Solution solutionToReturn = new Solution();
@@ -21,10 +28,13 @@ public class GameSolver {
         } else {
             // apply all valid moves and continue play with each resulting board
             validMoves.forEach(move -> {
-                solutionToReturn.add(findWinCountsForBoardAndPossibleMoves(applyMove(board, move), possibleMoves));
+                solutionToReturn.add(findCountsRecursive(applyMove(board, move), possibleMoves, solutionCache));
             });
         }
 
+        // store solution for this board in cache to make things more efficient since many
+        // boards are seen multiple times
+        solutionCache.put(board, solutionToReturn);
         return solutionToReturn;
     }
 
@@ -88,6 +98,14 @@ public class GameSolver {
         Preconditions.checkArgument(board.size() == move.size(),
                 "Size of the move list (" + move.size()
                         + ") does not match size of the board (" + board.size() +") as required");
+    }
+
+    private String boardToString(List<Integer> board) {
+        StringBuilder sb = new StringBuilder().append("[");
+        board.forEach(i -> sb.append(i).append(","));
+        sb.deleteCharAt(sb.length()-1).append("]");
+
+        return sb.toString();
     }
 
     public static class Solution {
