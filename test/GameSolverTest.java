@@ -185,7 +185,7 @@ public class GameSolverTest {
                 Lists.newArrayList(0,0,-2,-2)
         );
 
-        GameSolver.Solution solution = GameSolver.INSTANCE.findPossibleWinningStrategies(board, allMoves);
+        GameSolver.Solution solution = GameSolver.INSTANCE.findWinCountsForBoardAndPossibleMoves(board, allMoves);
         assertEquals(3, solution.getPlayer1WinTotal());
         assertEquals(2, solution.getPlayer2WinTotal());
     }
@@ -201,7 +201,7 @@ public class GameSolverTest {
         // Player 2 move - 6,4,0,4 (game over)
         // Player 1 wins
 
-        GameSolver.Solution solution = GameSolver.INSTANCE.findPossibleWinningStrategies(board, moves);
+        GameSolver.Solution solution = GameSolver.INSTANCE.findWinCountsForBoardAndPossibleMoves(board, moves);
         assertEquals(1, solution.getPlayer1WinTotal());
         assertEquals(0, solution.getPlayer2WinTotal());
     }
@@ -217,7 +217,7 @@ public class GameSolverTest {
         // Player 2 move - 4,4,0,6 (game over)
         // Player 2 wins
 
-        GameSolver.Solution solution = GameSolver.INSTANCE.findPossibleWinningStrategies(board, moves);
+        GameSolver.Solution solution = GameSolver.INSTANCE.findWinCountsForBoardAndPossibleMoves(board, moves);
         assertEquals(0, solution.getPlayer1WinTotal());
         assertEquals(1, solution.getPlayer2WinTotal());
     }

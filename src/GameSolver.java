@@ -1,5 +1,4 @@
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,15 +12,23 @@ public class GameSolver {
     private GameSolver(){}
 
 
-    public Solution findPossibleWinningStrategies(List<Integer> board, List<List<Integer>> moves) {
-        Solution winsPerPlayer = new Solution();
+    public Solution findWinCountsForBoardAndPossibleMoves(List<Integer> board, List<List<Integer>> possibleMoves) {
+        // if no valid moves, determine winner and increment that player's counter (base case of recursion)
+        List<List<Integer>> validMoves = getValidMoves(board, possibleMoves);
+        Solution solutionToReturn = new Solution();
+        if (validMoves.isEmpty()) {
+            solutionToReturn.incrementWinCount(findWinner(board));
+        } else {
+            // apply all valid moves and continue play with each resulting board
+            validMoves.forEach(move -> {
+                solutionToReturn.add(findWinCountsForBoardAndPossibleMoves(applyMove(board, move), possibleMoves));
+            });
+        }
 
-        findStrategiesRecursive(board, moves, winsPerPlayer);
-
-        return winsPerPlayer;
+        return solutionToReturn;
     }
 
-    public Solution findPossibleWinningStrategies(int[] board, int[][] moves) {
+    public Solution findWinCountsForBoardAndPossibleMoves(int[] board, int[][] moves) {
         List<List<Integer>> allPossibleMoves = new ArrayList<>(moves.length);
         for (int i = 0; i < moves.length; i++) {
             List<Integer> move = new ArrayList<>();
@@ -36,21 +43,7 @@ public class GameSolver {
             boardAsList.add(board[i]);
         }
 
-        return findPossibleWinningStrategies(boardAsList, allPossibleMoves);
-    }
-
-    private void findStrategiesRecursive(List<Integer> board, List<List<Integer>> possibleMoves, Solution winsPerPlayer) {
-        // if no valid moves, determine winner and increment that player's counter (base case of recursion)
-        List<List<Integer>> validMoves = getValidMoves(board, possibleMoves);
-        if (validMoves.isEmpty()) {
-            int winner = findWinner(board);
-            winsPerPlayer.incrementWinCount(winner);
-        } else {
-            // apply all valid moves and continue play with each resulting board
-            validMoves.forEach(move -> {
-                findStrategiesRecursive(applyMove(board, move), possibleMoves, winsPerPlayer);
-            });
-        }
+        return findWinCountsForBoardAndPossibleMoves(boardAsList, allPossibleMoves);
     }
 
 
