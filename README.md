@@ -1,1 +1,1 @@
-# DrawStonesGameSolver
+This code is intended to determine all possible permutations of how a relatively simple game can turn out and provide win counts from those permutations for the two players.  More details to follow.
